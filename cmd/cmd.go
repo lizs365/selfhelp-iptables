@@ -14,6 +14,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const version = "2.5.0"
+
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -28,10 +30,10 @@ var (
 		Use:   "selfhelp-iptables",
 		Short: "selfhelp iptables is a tool controlling iptables through http api and cmdline.",
 		Long: `selfhelp iptables is a tool for controlling iptables through http api and command line
-           https://github.com/aoyouer/selfhelp-iptables`,
+https://github.com/aoyouer/selfhelp-iptables  https://github.com/lizs365/selfhelp-iptables`,
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println(`Selfhelp iptables is a tool for controlling iptables through http api and command line
-Github: https://github.com/aoyouer/selfhelp-iptables
+Github: https://github.com/aoyouer/selfhelp-iptables  https://github.com/lizs365/selfhelp-iptables
 Please use selfhelp-iptables start to start program`)
 			os.Exit(0)
 		},
@@ -39,7 +41,7 @@ Please use selfhelp-iptables start to start program`)
 
 	startCmd = &cobra.Command{
 		Use:     "start",
-		Short:   "start selfhelp-iptables",
+		Short:   "start selfhelp-iptables (v" + version + ")",
 		Example: "selfhelp-iptables start -a adminkey -u userkey -p 22 -p 23 -l 8080",
 
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -137,7 +139,7 @@ func initConfig() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	// 手动指定配置文件路径
-	startCmd.Flags().StringVarP(&configFilePath, "config", "c", "", "config file (default is /etc/selfhelp-iptables/config.yaml")
+	startCmd.Flags().StringVarP(&configFilePath, "config", "c", "", "config file (default is /etc/selfhelp-iptables/config.yaml)")
 
 	startCmd.Flags().StringP("adminkey", "a", "", "key used to control this system")
 	viper.BindPFlag("adminkey", startCmd.Flags().Lookup("adminkey"))
