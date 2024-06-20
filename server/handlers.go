@@ -74,7 +74,10 @@ func AddWhitelist(w http.ResponseWriter, req *http.Request) {
 	// 需要对ip进行检查,
 	if keyAuthentication {
 		if len(strings.Split(remoteIP, ",")) == 1 {
-			iptablesService.AddWhitelistedIP(remoteIP, true)
+			// 避免重复添加已有IP，导致对应IP统计数据清空
+			if _, ok := iptablesService.WhitelistedIPs[remoteIP]; !ok {
+				iptablesService.AddWhitelistedIP(remoteIP, true)
+			}
 			utils.CmdColorGreen.Println("add whitelisted ip:", remoteIP)
 			fmt.Fprintf(w, "add whitelisted ip:"+remoteIP)
 		} else {
