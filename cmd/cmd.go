@@ -65,6 +65,7 @@ Please use selfhelp-iptables start to start program`)
 				Reject:              viper.GetBool("reject"),
 				RateTrigger:         viper.GetString("rateTrigger"),
 				ReverseProxySupport: viper.GetBool("reverseProxySupport"),
+				Interactive:         viper.GetBool("Interactive"),
 			}
 			// 启动程序
 			color.Set(color.FgCyan, color.Bold)
@@ -81,15 +82,20 @@ Please use selfhelp-iptables start to start program`)
 			// 启动iptables服务
 			iptSvc := iptsvc.IPTablesService{}
 			iptSvc.Start()
-			go server.StartServer(&iptSvc)
 			// 启动周期性任务
 			startCron(&iptSvc)
-			// 主协程读取用户输入并执行命令
-			for {
-				var cmdIn string
-				fmt.Scan(&cmdIn)
-				cmdlineHandler(cmdIn, &iptSvc)
+			if config.ServiceConfig.Interactive {
+				go server.StartServer(&iptSvc)
+				// 主协程读取用户输入并执行命令
+				for {
+					var cmdIn string
+					fmt.Scan(&cmdIn)
+					cmdlineHandler(cmdIn, &iptSvc)
+				}
+			} else {
+				server.StartServer(&iptSvc)
 			}
+			return
 		},
 	}
 )
